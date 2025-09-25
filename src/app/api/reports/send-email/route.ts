@@ -56,7 +56,7 @@ ${userSmokes ? `• เฉลี่ย: ${avgCigarettesPerDay} มวน/วั�
 ${userSmokes ? `• ความอยากเฉลี่ย: ${monthlySummary.avgCraving}/10` : ''}
 
 ประเภทกิจกรรมที่ทำ:
-${monthlySummary.activityTypes.map(activity => 
+${monthlySummary.activityTypes.map((activity: { name: string; count: number }) => 
   `• ${activity.name}: ${activity.count} ครั้ง`
 ).join('\n')}
 
