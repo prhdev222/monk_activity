@@ -21,7 +21,7 @@ export default function LoginPage() {
       localStorage.setItem("currentUserSmokes", String(user.smokes));
       localStorage.setItem("hasAccount", "true");
       window.location.href = "/dashboard";
-    } catch (e: unknown) {
+    } catch {
       setError("เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง");
     } finally {
       setLoading(false);

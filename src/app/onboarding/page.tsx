@@ -37,7 +37,7 @@ export default function OnboardingPage() {
       localStorage.setItem("currentUserSmokes", String(user.smokes));
       localStorage.setItem("hasAccount", "true");
       window.location.href = "/dashboard";
-    } catch (e: unknown) {
+    } catch {
       setError("ลงทะเบียนไม่สำเร็จ กรุณาตรวจสอบข้อมูลหรือเบอร์ซ้ำ");
     } finally {
       setLoading(false);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { apiFetch } from "@/lib/fetch";
 
 type Smoking = {
@@ -44,7 +44,7 @@ export default function SmokingPage() {
     }
   };
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       if (!userId) return;
@@ -53,7 +53,7 @@ export default function SmokingPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     setUserId(typeof window !== "undefined" ? localStorage.getItem("currentUserId") : null);

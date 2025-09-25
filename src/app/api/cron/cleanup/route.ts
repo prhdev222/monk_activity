@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 // ลบข้อมูลเก่ากว่า 180 วัน ของทุกผู้ใช้ (เรียกโดย Vercel Cron)

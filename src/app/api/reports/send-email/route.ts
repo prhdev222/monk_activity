@@ -27,6 +27,17 @@ export async function POST(req: NextRequest) {
     
     const userSmokes = user?.smokes || false;
     
+    // ดึงข้อมูลบุหรี่สำหรับคำนวณสถิติ
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const smokingData = await prisma.smokingTracking.findMany({
+      where: { 
+        userId,
+        date: { gte: thirtyDaysAgo }
+      }
+    });
+    
     // คำนวณสถิติบุหรี่ (เฉลี่ยจากจำนวนวันที่มีข้อมูลจริง)
     const actualDays = smokingData.length > 0 ? smokingData.length : 1; // ป้องกันการหารด้วย 0
     const avgCigarettesPerDay = monthlySummary.totalCigarettes > 0 
