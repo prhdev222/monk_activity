@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 // ลบข้อมูลเก่ากว่า 180 วัน ของทุกผู้ใช้ (เรียกโดย Vercel Cron)
-export async function GET(_req: NextRequest) {
+export async function GET() {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 180);
   try {

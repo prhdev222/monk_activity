@@ -68,7 +68,16 @@ export default function ProfilePage() {
     setLoading(true);
     setMsg(null);
     try {
-      const updateData: any = {
+      const updateData: Partial<{
+        phone: string;
+        firstName: string;
+        lastName: string;
+        hn: string;
+        templeName: string;
+        weightKg: number;
+        heightCm: number;
+        smokes: boolean;
+      }> = {
         phone: form.phone,
         firstName: form.firstName,
         lastName: form.lastName || undefined,
@@ -92,7 +101,7 @@ export default function ProfilePage() {
       setUserData(updated);
       setMsg("บันทึกโปรไฟล์เรียบร้อย");
       setActiveTab("view");
-    } catch (error) {
+    } catch {
       setMsg("เกิดข้อผิดพลาดในการบันทึก");
     } finally {
       setLoading(false);

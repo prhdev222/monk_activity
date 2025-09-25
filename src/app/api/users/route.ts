@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
       select: { id: true, phone: true, monkName: true, smokes: true },
     });
     return NextResponse.json(user, { status: 201 });
-  } catch (err: any) {
+  } catch (err: unknown) {
     // Prisma unique constraint error
-    if (err?.code === "P2002") {
+    if (err && typeof err === 'object' && 'code' in err && err.code === "P2002") {
       return NextResponse.json({ error: "phone_exists" }, { status: 409 });
     }
     console.error("/api/users POST error", err);

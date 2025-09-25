@@ -419,7 +419,7 @@ export default function ReportsPage() {
     
     setSendingEmail(true);
     try {
-      const response = await apiFetch('/api/reports/send-email', {
+      await apiFetch('/api/reports/send-email', {
         method: 'POST',
         body: JSON.stringify({
           email,
@@ -447,7 +447,7 @@ export default function ReportsPage() {
     
     setSendingClinic(true);
     try {
-      const response = await apiFetch('/api/reports/send-email', {
+      await apiFetch('/api/reports/send-email', {
         method: 'POST',
         body: JSON.stringify({
           email: 'clinic', // ใช้ keyword 'clinic' เพื่อระบุว่าเป็นคลินิก

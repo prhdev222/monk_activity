@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
-  const data = parsed.data as any;
+  const data = parsed.data;
   const user = await prisma.user.findUnique({ where: { id: data.userId } });
   const calories = estimateCalories(data.activityType, data.durationMin, user?.weightKg ?? null);
   const created = await prisma.activity.create({

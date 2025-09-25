@@ -49,7 +49,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     smokes?: boolean; 
   };
 
-  const updateData: any = {};
+  const updateData: Partial<{
+    phone: string;
+    firstName: string;
+    lastName: string;
+    hn: string;
+    templeName: string;
+    weightKg: number;
+    heightCm: number;
+    smokes: boolean;
+  }> = {};
   
   if (phone !== undefined) updateData.phone = phone;
   if (password !== undefined) {

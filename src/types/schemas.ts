@@ -16,7 +16,7 @@ export const activityPayloadSchema = z.object({
   date: z
     .union([z.string().datetime(), z.date()])
     .optional()
-    .transform((v) => (v ? new Date(v as any) : undefined)),
+    .transform((v) => (v ? new Date(v as string | Date) : undefined)),
   durationMin: z.number().int().min(0).optional(),
   intensity: z.string().min(1).max(50).optional(),
   caloriesBurned: z.number().int().min(0).optional(),
@@ -27,7 +27,7 @@ export type ActivityPayload = z.infer<typeof activityPayloadSchema>;
 
 export const smokingPayloadSchema = z.object({
   userId: z.string().cuid(),
-  date: z.string().datetime().or(z.date()).transform((v) => new Date(v as any)),
+  date: z.string().datetime().or(z.date()).transform((v) => new Date(v as string | Date)),
   cigarettesCount: z.number().int().min(0),
   cravingLevel: z.number().int().min(0).max(10).optional(),
 });

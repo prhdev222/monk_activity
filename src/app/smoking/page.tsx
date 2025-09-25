@@ -11,7 +11,6 @@ type Smoking = {
 };
 
 // userId จะถูกโหลดหลัง mount เพื่อหลีกเลี่ยง hydration mismatch
-const getNowIsoDate = () => new Date().toISOString().slice(0, 10);
 
 export default function SmokingPage() {
   const smokes = typeof window !== "undefined" ? localStorage.getItem("currentUserSmokes") === "true" : true;
@@ -62,7 +61,7 @@ export default function SmokingPage() {
 
   useEffect(() => {
     if (userId) void load();
-  }, [userId]);
+  }, [userId, load]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
