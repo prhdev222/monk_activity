@@ -2,8 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/cleanup",
-      "schedule": "0 2 * * *",
-      "timezone": "Asia/Bangkok"
+      "schedule": "0 2 * * *"
     }
   ]
 }
