@@ -12,6 +12,8 @@ interface ActivityData {
   date: string;
   caloriesBurned: number;
   activityType: string;
+  durationMin?: number;
+  intensity?: string;
 }
 
 interface SmokingData {
