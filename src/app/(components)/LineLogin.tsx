@@ -5,8 +5,7 @@ import {
   initLiff, 
   isLineLoggedIn, 
   lineLogin, 
-  getLineAccessToken,
-  isInClient 
+  getLineAccessToken
 } from "@/lib/line";
 import { apiFetch } from "@/lib/fetch";
 
@@ -46,7 +45,7 @@ export default function LineLogin({ onSuccess, onError, className = "" }: LineLo
     };
 
     initializeLiff();
-  }, []);
+  }, [handleLiffLogin]);
 
   const handleLiffLogin = useCallback(async () => {
     try {

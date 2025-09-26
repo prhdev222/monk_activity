@@ -39,9 +39,9 @@ export async function GET(req: NextRequest) {
 
     const lineProfile = profileResponse.data;
 
-    // Check if user already exists
-    let user = await prisma.user.findUnique({
-      where: { lineUserId: lineProfile.userId },
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { lineUserId: lineProfile.userId }
     });
 
     if (!user) {
