@@ -53,6 +53,13 @@ export default function LoginPage() {
 
   const handleLineLoginSuccess = (user: { id: string; smokes: boolean; lineUserId?: string; lineDisplayName?: string; linePictureUrl?: string; authProvider: string }) => {
     console.log("LINE login successful:", user);
+    // Store user info in localStorage
+    localStorage.setItem("currentUserId", user.id);
+    localStorage.setItem("currentUserSmokes", String(user.smokes));
+    localStorage.setItem("hasAccount", "true");
+    localStorage.setItem("authProvider", user.authProvider);
+    // Redirect to dashboard
+    window.location.href = "/dashboard";
   };
 
   const handleLineLoginError = (error: string) => {

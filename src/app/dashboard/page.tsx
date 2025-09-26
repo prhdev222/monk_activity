@@ -1,4 +1,8 @@
-import prisma from "@/lib/prisma";
+"use client";
+
+import { useEffect, useState } from "react";
+import AuthGuard from "@/app/(components)/AuthGuard";
+import { apiFetch } from "@/lib/fetch";
 
 // ธรรมะสอนใจ: อ้างอิงจาก Sanook Horoscope
 // แหล่งที่มา: https://www.sanook.com/horoscope/74737/
@@ -31,68 +35,76 @@ function getQuoteOfToday(date: Date): string {
   return DHAMMA_QUOTES[idx];
 }
 
-export default async function DashboardPage() {
-  const now = new Date();
-  const startOfToday = new Date(now);
-  startOfToday.setHours(0, 0, 0, 0);
-  const endOfToday = new Date(now);
-  endOfToday.setHours(23, 59, 59, 999);
+interface DashboardData {
+  activitiesCountToday: number;
+  caloriesToday: number;
+  cigs7: number;
+  avgCraving: number;
+}
 
-  const sevenDaysAgo = new Date(now);
-  sevenDaysAgo.setDate(now.getDate() - 6);
-  sevenDaysAgo.setHours(0, 0, 0, 0);
+export default function DashboardPage() {
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const [activitiesCountToday, caloriesAgg, smokingAgg] = await Promise.all([
-    prisma.activity.count({
-      where: { date: { gte: startOfToday, lte: endOfToday } },
-    }),
-    prisma.activity.aggregate({
-      _sum: { caloriesBurned: true },
-      where: { date: { gte: startOfToday, lte: endOfToday } },
-    }),
-    prisma.smokingTracking.aggregate({
-      _sum: { cigarettesCount: true },
-      _avg: { cravingLevel: true },
-      where: { date: { gte: sevenDaysAgo, lte: endOfToday } },
-    }),
-  ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiFetch<DashboardData>("/api/dashboard");
+        setData(response);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const caloriesToday = caloriesAgg._sum.caloriesBurned ?? 0;
-  const cigs7 = smokingAgg._sum.cigarettesCount ?? 0;
-  const avgCraving = smokingAgg._avg.cravingLevel ?? 0;
+    fetchData();
+  }, []);
 
-  const todaysQuote = getQuoteOfToday(now);
+  if (loading) {
+    return (
+      <AuthGuard>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+        </div>
+      </AuthGuard>
+    );
+  }
+
+  const todaysQuote = getQuoteOfToday(new Date());
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">แดชบอร์ด</h1>
-        <p className="text-sm text-gray-600">ภาพรวมความก้าวหน้าและคำให้กำลังใจของวัน</p>
+    <AuthGuard>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold">แดชบอร์ด</h1>
+          <p className="text-sm text-gray-600">ภาพรวมความก้าวหน้าและคำให้กำลังใจของวัน</p>
+        </div>
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <article className="rounded-lg border bg-white p-4 shadow-sm">
+            <div className="text-xs text-gray-500">กิจกรรมวันนี้</div>
+            <div className="text-2xl font-semibold">{data?.activitiesCountToday?.toLocaleString() || 0}</div>
+          </article>
+          <article className="rounded-lg border bg-white p-4 shadow-sm">
+            <div className="text-xs text-gray-500">แคลอรี่โดยประมาณ</div>
+            <div className="text-2xl font-semibold">{data?.caloriesToday?.toLocaleString() || 0} kcal</div>
+          </article>
+          <article className="rounded-lg border bg-white p-4 shadow-sm">
+            <div className="text-xs text-gray-500">จำนวนมวน (7 วัน)</div>
+            <div className="text-2xl font-semibold">{data?.cigs7?.toLocaleString() || 0}</div>
+          </article>
+          <article className="rounded-lg border bg-white p-4 shadow-sm">
+            <div className="text-xs text-gray-500">ระดับความอยากเฉลี่ย</div>
+            <div className="text-2xl font-semibold">{data?.avgCraving?.toFixed(1) || 0} / 10</div>
+          </article>
+        </section>
+        <section className="rounded-lg border bg-white p-6 shadow-sm">
+          <div className="text-sm font-medium mb-2">ธรรมะสอนใจประจำวัน</div>
+          <p className="text-gray-700">&quot;{todaysQuote}&quot;</p>
+          <div className="mt-2 text-xs text-gray-500">อ้างอิง: Sanook Horoscope (<a className="underline" href="https://www.sanook.com/horoscope/74737/" target="_blank" rel="noreferrer">ลิงก์</a>)</div>
+        </section>
       </div>
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article className="rounded-lg border bg-white p-4 shadow-sm">
-          <div className="text-xs text-gray-500">กิจกรรมวันนี้</div>
-          <div className="text-2xl font-semibold">{activitiesCountToday.toLocaleString()}</div>
-        </article>
-        <article className="rounded-lg border bg-white p-4 shadow-sm">
-          <div className="text-xs text-gray-500">แคลอรี่โดยประมาณ</div>
-          <div className="text-2xl font-semibold">{caloriesToday.toLocaleString()} kcal</div>
-        </article>
-        <article className="rounded-lg border bg-white p-4 shadow-sm">
-          <div className="text-xs text-gray-500">จำนวนมวน (7 วัน)</div>
-          <div className="text-2xl font-semibold">{cigs7.toLocaleString()}</div>
-        </article>
-        <article className="rounded-lg border bg-white p-4 shadow-sm">
-          <div className="text-xs text-gray-500">ระดับความอยากเฉลี่ย</div>
-          <div className="text-2xl font-semibold">{avgCraving.toFixed(1)} / 10</div>
-        </article>
-      </section>
-      <section className="rounded-lg border bg-white p-6 shadow-sm">
-        <div className="text-sm font-medium mb-2">ธรรมะสอนใจประจำวัน</div>
-        <p className="text-gray-700">“{todaysQuote}”</p>
-        <div className="mt-2 text-xs text-gray-500">อ้างอิง: Sanook Horoscope (<a className="underline" href="https://www.sanook.com/horoscope/74737/" target="_blank" rel="noreferrer">ลิงก์</a>)</div>
-      </section>
-    </div>
+    </AuthGuard>
   );
 }
 
