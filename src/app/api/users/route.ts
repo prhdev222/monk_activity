@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
         weightKg: data.weightKg,
         heightCm: data.heightCm,
         smokes: data.smokes,
-        consentPdpa: data.consentPdpa,
+        consentPdpa: Boolean(data.consentPdpa),
       },
       select: { id: true, phone: true, monkName: true, smokes: true },
     });
