@@ -28,25 +28,6 @@ export default function LineLogin({ onSuccess, onError, className = "" }: LineLo
   const [loading, setLoading] = useState(false);
   const [liffReady, setLiffReady] = useState(false);
 
-  useEffect(() => {
-    const initializeLiff = async () => {
-      try {
-        const success = await initLiff();
-        setLiffReady(success);
-        
-        // Check if already logged in via LIFF
-        if (success && isLineLoggedIn()) {
-          await handleLiffLogin();
-        }
-      } catch (error) {
-        console.error("LIFF initialization error:", error);
-        setLiffReady(false);
-      }
-    };
-
-    initializeLiff();
-  }, [handleLiffLogin]);
-
   const handleLiffLogin = useCallback(async () => {
     try {
       setLoading(true);
@@ -80,14 +61,32 @@ export default function LineLogin({ onSuccess, onError, className = "" }: LineLo
       }
     } catch (error) {
       console.error("LINE login error:", error);
-      const errorMessage = "การเข้าสู่ระบบผ่าน LINE ล้มเหลว";
       if (onError) {
-        onError(errorMessage);
+        onError(error as Error);
       }
     } finally {
       setLoading(false);
     }
   }, [onSuccess, onError]);
+
+  useEffect(() => {
+    const initializeLiff = async () => {
+      try {
+        const success = await initLiff();
+        setLiffReady(success);
+        
+        // Check if already logged in via LIFF
+        if (success && isLineLoggedIn()) {
+          await handleLiffLogin();
+        }
+      } catch (error) {
+        console.error("LIFF initialization error:", error);
+        setLiffReady(false);
+      }
+    };
+
+    initializeLiff();
+  }, [handleLiffLogin]);
 
   const handleWebLogin = async () => {
     try {
