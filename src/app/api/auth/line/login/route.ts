@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const channelId = process.env.NEXT_PUBLIC_LINE_CHANNEL_ID;
     const redirectUri = process.env.NEXT_PUBLIC_LINE_REDIRECT_URI;
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     const channelId = process.env.NEXT_PUBLIC_LINE_CHANNEL_ID;
     const redirectUri = process.env.NEXT_PUBLIC_LINE_REDIRECT_URI;

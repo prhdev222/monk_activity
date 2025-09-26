@@ -51,7 +51,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleLineLoginSuccess = (user: any) => {
+  const handleLineLoginSuccess = (user: { id: string; displayName: string; pictureUrl?: string }) => {
     console.log("LINE login successful:", user);
   };
 

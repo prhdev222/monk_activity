@@ -147,7 +147,7 @@ export const addFriend = async () => {
     }
 
     // This will show the Add Friend dialog
-    const result = await liff.permanentLink.createUrl();
+    await liff.permanentLink.createUrl();
     window.open(`https://line.me/R/ti/p/${LINE_CONFIG.channelId}`, '_blank');
     console.log('Add friend dialog shown');
   } catch (error) {

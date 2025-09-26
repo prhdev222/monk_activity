@@ -6,7 +6,6 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const code = searchParams.get("code");
-    const state = searchParams.get("state");
 
     if (!code) {
       return NextResponse.json({ error: "Authorization code not found" }, { status: 400 });

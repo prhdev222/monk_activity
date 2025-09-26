@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { 
   initLiff, 
   isLineLoggedIn, 
-  getLineProfile, 
   lineLogin, 
   getLineAccessToken,
   isInClient 
@@ -29,14 +28,12 @@ interface LineLoginProps {
 export default function LineLogin({ onSuccess, onError, className = "" }: LineLoginProps) {
   const [loading, setLoading] = useState(false);
   const [liffReady, setLiffReady] = useState(false);
-  const [isInLineApp, setIsInLineApp] = useState(false);
 
   useEffect(() => {
     const initializeLiff = async () => {
       try {
         const success = await initLiff();
         setLiffReady(success);
-        setIsInLineApp(isInClient());
         
         // Check if already logged in via LIFF
         if (success && isLineLoggedIn()) {
@@ -51,7 +48,7 @@ export default function LineLogin({ onSuccess, onError, className = "" }: LineLo
     initializeLiff();
   }, []);
 
-  const handleLiffLogin = async () => {
+  const handleLiffLogin = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -91,7 +88,7 @@ export default function LineLogin({ onSuccess, onError, className = "" }: LineLo
     } finally {
       setLoading(false);
     }
-  };
+  }, [onSuccess, onError]);
 
   const handleWebLogin = async () => {
     try {
