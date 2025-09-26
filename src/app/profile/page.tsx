@@ -77,6 +77,7 @@ export default function ProfilePage() {
         weightKg: number;
         heightCm: number;
         smokes: boolean;
+        passwordHash: string;
       }> = {
         phone: form.phone,
         firstName: form.firstName,
