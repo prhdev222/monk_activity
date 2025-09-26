@@ -62,7 +62,7 @@ export default function LineLogin({ onSuccess, onError, className = "" }: LineLo
     } catch (error) {
       console.error("LINE login error:", error);
       if (onError) {
-        onError(error as Error);
+        onError(error instanceof Error ? error.message : "การเข้าสู่ระบบผ่าน LINE ล้มเหลว");
       }
     } finally {
       setLoading(false);
