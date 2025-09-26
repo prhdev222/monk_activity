@@ -7,6 +7,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id             String            @id @default(cuid()) @map("user_id")
+  monkName       String            @map("monk_name")
+  templeName     String            @map("temple_name")
+  age            Int?
+  weightKg       Float?            @map("weight")
+  heightCm       Float?            @map("height")
+  targetWeightKg Float?            @map("target_weight")
+  createdAt      DateTime          @default(now()) @map("created_date")
+  firstName      String?           @map("first_name")
+  hn             String?           @map("hn")
+  lastName       String?           @map("last_name")
+  passwordHash   String?           @map("password_hash")
+  phone          String?           @unique
+  smokes         Boolean           @default(false)
+  consentPdpa    Boolean           @default(false) @map("consent_pdpa")
+  lineUserId     String?           @unique @map("line_user_id")
+  lineDisplayName String?          @map("line_display_name")
+  linePictureUrl String?           @map("line_picture_url")
+  activities     Activity[]
+  smokingRecords SmokingTracking[]
+
+  @@map("users")
+}
+
+model Activity {
+  id             String       @id @default(cuid()) @map("activity_id")
+  userId         String       @map("user_id")
+  activityType   ActivityType @map("activity_type")
+  date           DateTime
+  durationMin    Int?         @map("duration")
+  intensity      String?      @map("intensity")
+  caloriesBurned Int?         @map("calories_burned")
+  notes          String?
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+  @@map("activities")
+}
+
+model SmokingTracking {
+  id              String   @id @default(cuid()) @map("record_id")
+  userId          String   @map("user_id")
+  date            DateTime
+  cigarettesCount Int      @map("cigarettes_count")
+  cravingLevel    Int?     @map("craving_level")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+  @@map("smoking_tracking")
+}
+
 enum ActivityType {
   SITTING_MEDITATION
   CHANTING
@@ -18,55 +70,3 @@ enum ActivityType {
   WALKING_MEDITATION
   DRINK_PANA_ZERO_CAL
 }
-
-model User {
-  id             String   @id @default(cuid()) @map("user_id")
-  phone          String?  @unique
-  passwordHash   String?  @map("password_hash")
-  firstName      String?  @map("first_name")
-  lastName       String?  @map("last_name")
-  hn             String?  @map("hn")
-  monkName       String   @map("monk_name")
-  templeName     String   @map("temple_name")
-  age            Int?
-  weightKg       Float?   @map("weight")
-  heightCm       Float?   @map("height")
-  targetWeightKg Float?   @map("target_weight")
-  createdAt      DateTime @default(now()) @map("created_date")
-  smokes         Boolean  @default(false)
-  consentPdpa    Boolean  @default(false) @map("consent_pdpa")
-
-  activities     Activity[]
-  smokingRecords SmokingTracking[]
-
-  @@map("users")
-}
-
-model Activity {
-  id             String       @id @default(cuid()) @map("activity_id")
-  userId         String       @map("user_id")
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activityType   ActivityType @map("activity_type")
-  date           DateTime
-  durationMin    Int?         @map("duration")
-  intensity      String?      @map("intensity")
-  caloriesBurned Int?         @map("calories_burned")
-  notes          String?
-
-  @@index([userId, date])
-  @@map("activities")
-}
-
-model SmokingTracking {
-  id              String   @id @default(cuid()) @map("record_id")
-  userId          String   @map("user_id")
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  date            DateTime
-  cigarettesCount Int      @map("cigarettes_count")
-  cravingLevel    Int?     @map("craving_level")
-
-  @@index([userId, date])
-  @@map("smoking_tracking")
-}
-
-
