@@ -99,7 +99,7 @@ export default function ProfilePage() {
         body: JSON.stringify(updateData),
       });
       
-      setUserData(updated);
+      setUserData(updated as UserData);
       setMsg("บันทึกโปรไฟล์เรียบร้อย");
       setActiveTab("view");
     } catch {
