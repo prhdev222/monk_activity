@@ -88,9 +88,9 @@ export default function ProfilePage() {
         smokes: form.smokes,
       };
       
-      // เพิ่ม password เฉพาะเมื่อมีการกรอก
+      // เพิ่ม passwordHash เฉพาะเมื่อมีการกรอก
       if (form.password.trim()) {
-        updateData.password = form.password;
+        updateData.passwordHash = form.password;
       }
       
       const updated = await apiFetch(`/api/users/${userId}`, {
