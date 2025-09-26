@@ -58,6 +58,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     weightKg: number;
     heightCm: number;
     smokes: boolean;
+    passwordHash: string;
   }> = {};
   
   if (phone !== undefined) updateData.phone = phone;
