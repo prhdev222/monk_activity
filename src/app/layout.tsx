@@ -54,7 +54,15 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="mt-8 text-xs text-white" style={{backgroundColor: "var(--brand-500)"}}>
-            <div className="mx-auto max-w-6xl px-4 py-6">© {new Date().getFullYear()} พระสุขภาพดี</div>
+            <div className="mx-auto max-w-6xl px-4 py-6">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
+                <div>© {new Date().getFullYear()} พระสุขภาพดี</div>
+                <div className="flex gap-4">
+                  <a href="/privacy" className="hover:underline">นโยบายความเป็นส่วนตัว</a>
+                  <a href="/terms" className="hover:underline">ข้อกำหนดการใช้งาน</a>
+                </div>
+              </div>
+            </div>
           </footer>
         </LiffProvider>
       </body>
