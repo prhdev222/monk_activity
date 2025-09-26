@@ -51,10 +51,8 @@ export async function GET(req: NextRequest) {
           lineUserId: lineProfile.userId,
           lineDisplayName: lineProfile.displayName,
           linePictureUrl: lineProfile.pictureUrl,
-          lineStatusMessage: lineProfile.statusMessage,
           monkName: lineProfile.displayName || "พระ",
           templeName: "วัดที่ยังไม่ระบุ",
-          authProvider: "line",
           consentPdpa: true, // Assume consent when using LINE Login
         },
       });
@@ -65,7 +63,6 @@ export async function GET(req: NextRequest) {
         data: {
           lineDisplayName: lineProfile.displayName,
           linePictureUrl: lineProfile.pictureUrl,
-          lineStatusMessage: lineProfile.statusMessage,
         },
       });
     }
@@ -117,10 +114,8 @@ export async function POST(req: NextRequest) {
           lineUserId: lineProfile.userId,
           lineDisplayName: lineProfile.displayName,
           linePictureUrl: lineProfile.pictureUrl,
-          lineStatusMessage: lineProfile.statusMessage,
           monkName: lineProfile.displayName || "พระ",
           templeName: "วัดที่ยังไม่ระบุ",
-          authProvider: "line",
           consentPdpa: true,
         },
       });
@@ -131,7 +126,6 @@ export async function POST(req: NextRequest) {
         data: {
           lineDisplayName: lineProfile.displayName,
           linePictureUrl: lineProfile.pictureUrl,
-          lineStatusMessage: lineProfile.statusMessage,
         },
       });
     }
@@ -143,7 +137,6 @@ export async function POST(req: NextRequest) {
       pictureUrl: user.linePictureUrl,
       monkName: user.monkName,
       smokes: user.smokes,
-      authProvider: user.authProvider,
     });
   } catch (error) {
     console.error("LINE Login API error:", error);
