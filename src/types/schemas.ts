@@ -45,7 +45,7 @@ export const userCreateSchema = z.object({
   weightKg: z.number().positive().optional(),
   heightCm: z.number().positive().optional(),
   smokes: z.boolean().default(false),
-  consentPdpa: z.literal(true, { errorMap: () => ({ message: "required" }) }),
+  consentPdpa: z.literal(true),
 });
 
 export type UserCreatePayload = z.infer<typeof userCreateSchema>;
