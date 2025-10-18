@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/fetch";
+import AuthGuard from "@/app/(components)/AuthGuard";
 
 interface UserData {
   id: string;
@@ -77,7 +78,7 @@ export default function ProfilePage() {
         weightKg: number;
         heightCm: number;
         smokes: boolean;
-        passwordHash: string;
+        password: string;
       }> = {
         phone: form.phone,
         firstName: form.firstName,
@@ -89,9 +90,9 @@ export default function ProfilePage() {
         smokes: form.smokes,
       };
       
-      // เพิ่ม passwordHash เฉพาะเมื่อมีการกรอก
+      // เพิ่ม password เฉพาะเมื่อมีการกรอก
       if (form.password.trim()) {
-        updateData.passwordHash = form.password;
+        updateData.password = form.password;
       }
       
       const updated = await apiFetch(`/api/users/${userId}`, {
@@ -133,11 +134,12 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">โปรไฟล์</h1>
-        <p className="text-sm text-gray-600">ดูและแก้ไขข้อมูลส่วนตัว</p>
-      </div>
+    <AuthGuard>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold">โปรไฟล์</h1>
+          <p className="text-sm text-gray-600">ดูและแก้ไขข้อมูลส่วนตัว</p>
+        </div>
 
       {/* Tab Navigation */}
       <div className="flex gap-2 border-b">
@@ -314,7 +316,8 @@ export default function ProfilePage() {
           </div>
         </form>
       )}
-    </div>
+      </div>
+    </AuthGuard>
   );
 }
 
