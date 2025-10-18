@@ -46,6 +46,7 @@ export default function ReportsPage() {
   const [sendingEmail, setSendingEmail] = useState(false);
   const [sendingClinic, setSendingClinic] = useState(false);
   const [userSmokes, setUserSmokes] = useState<boolean>(false);
+  const [reportPeriod, setReportPeriod] = useState<30 | 90 | 180>(30);
 
   useEffect(() => {
     setUserId(localStorage.getItem("currentUserId"));
@@ -216,35 +217,35 @@ export default function ReportsPage() {
     );
   }
 
-  // สร้างข้อมูลสรุป 1 เดือน
-  const generateMonthlySummary = () => {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  // สร้างข้อมูลสรุปตามช่วงเวลาที่เลือก
+  const generatePeriodSummary = () => {
+    const daysAgo = new Date();
+    daysAgo.setDate(daysAgo.getDate() - reportPeriod);
     
-    const monthlyActivities = activities.filter(activity => 
-      new Date(activity.date) >= thirtyDaysAgo
+    const periodActivities = activities.filter(activity => 
+      new Date(activity.date) >= daysAgo
     );
     
-    const monthlySmoking = smoking.filter(s => 
-      new Date(s.date) >= thirtyDaysAgo
+    const periodSmoking = smoking.filter(s => 
+      new Date(s.date) >= daysAgo
     );
     
-    const totalCalories = monthlyActivities.reduce((sum, activity) => sum + (activity.caloriesBurned || 0), 0);
-    const totalCigarettes = monthlySmoking.reduce((sum, s) => sum + (s.cigarettesCount || 0), 0);
-    const avgCraving = monthlySmoking.length > 0 
-      ? monthlySmoking.reduce((sum, s) => {
+    const totalCalories = periodActivities.reduce((sum, activity) => sum + (activity.caloriesBurned || 0), 0);
+    const totalCigarettes = periodSmoking.reduce((sum, s) => sum + (s.cigarettesCount || 0), 0);
+    const avgCraving = periodSmoking.length > 0 
+      ? periodSmoking.reduce((sum, s) => {
           const craving = s.entries && s.entries > 0 && typeof s.cravingLevelSum === 'number'
             ? s.cravingLevelSum / s.entries
             : s.cravingLevel ?? 0;
           return sum + craving;
-        }, 0) / monthlySmoking.length
+        }, 0) / periodSmoking.length
       : 0;
     
     return {
       totalCalories,
       totalCigarettes,
       avgCraving: avgCraving.toFixed(1),
-      totalActivities: monthlyActivities.length,
+      totalActivities: periodActivities.length,
       activityTypes: Object.keys(activityTypes).map(k => ({
         name: ACTIVITY_LABEL_BY_VALUE[k] ?? k,
         count: activityTypes[k] || 0
@@ -252,7 +253,7 @@ export default function ReportsPage() {
     };
   };
 
-  const monthlySummary = generateMonthlySummary();
+  const periodSummary = generatePeriodSummary();
 
   // สร้าง CSV
   const generateCSV = () => {
@@ -331,24 +332,24 @@ export default function ReportsPage() {
     <div class="container">
         <div class="header">
             <h1>รายงานสุขภาพพระ</h1>
-            <p>สรุปข้อมูล 30 วันล่าสุด (${currentDate})</p>
+            <p>สรุปข้อมูล ${reportPeriod} วันล่าสุด (${currentDate})</p>
         </div>
         
         <div class="summary">
             <div class="stat-card">
-                <div class="stat-number">${monthlySummary.totalCalories.toLocaleString()}</div>
+                <div class="stat-number">${periodSummary.totalCalories.toLocaleString()}</div>
                 <div class="stat-label">แคลอรี่รวม (kcal)</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">${monthlySummary.totalCigarettes.toLocaleString()}</div>
+                <div class="stat-number">${periodSummary.totalCigarettes.toLocaleString()}</div>
                 <div class="stat-label">มวนบุหรี่รวม</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">${monthlySummary.avgCraving}</div>
+                <div class="stat-number">${periodSummary.avgCraving}</div>
                 <div class="stat-label">ความอยากเฉลี่ย/10</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">${monthlySummary.totalActivities}</div>
+                <div class="stat-number">${periodSummary.totalActivities}</div>
                 <div class="stat-label">กิจกรรมทั้งหมด</div>
             </div>
         </div>
@@ -356,7 +357,7 @@ export default function ReportsPage() {
         <div class="section">
             <h3>ประเภทกิจกรรมที่ทำ</h3>
             <ul class="activity-list">
-                ${monthlySummary.activityTypes.map(activity => 
+                ${periodSummary.activityTypes.map(activity => 
                   `<li class="activity-item">${activity.name}: ${activity.count} ครั้ง</li>`
                 ).join('')}
             </ul>
@@ -428,7 +429,7 @@ export default function ReportsPage() {
         body: JSON.stringify({
           email,
           userId,
-          monthlySummary,
+          periodSummary,
           htmlReport: generateHTMLReport()
         })
       });
@@ -456,7 +457,7 @@ export default function ReportsPage() {
         body: JSON.stringify({
           email: 'clinic', // ใช้ keyword 'clinic' เพื่อระบุว่าเป็นคลินิก
           userId,
-          monthlySummary,
+          periodSummary,
           htmlReport: generateHTMLReport()
         })
       });
@@ -480,6 +481,24 @@ export default function ReportsPage() {
             <h1 className="text-2xl font-semibold">รายงาน & สถิติ</h1>
             <p className="text-sm text-gray-600">กราฟความก้าวหน้าและการเปรียบเทียบช่วงเวลา</p>
           </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label htmlFor="reportPeriod" className="text-sm font-medium text-gray-700">
+                ช่วงเวลา:
+              </label>
+              <select
+                id="reportPeriod"
+                value={reportPeriod}
+                onChange={(e) => setReportPeriod(Number(e.target.value) as 30 | 90 | 180)}
+                className="px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              >
+                <option value={30}>30 วันล่าสุด</option>
+                <option value={90}>90 วันล่าสุด</option>
+                <option value={180}>180 วันล่าสุด</option>
+              </select>
+            </div>
+          </div>
+        </div>
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={downloadCSV}
@@ -606,39 +625,38 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* สรุปสถิติ 30 วัน */}
+      {/* สรุปสถิติตามช่วงเวลาที่เลือก */}
       <div className="rounded-lg border bg-orange-50 p-6 shadow-sm">
-        <h3 className="text-lg font-medium mb-4 text-orange-700">สรุปข้อมูล 30 วันล่าสุด</h3>
+        <h3 className="text-lg font-medium mb-4 text-orange-700">สรุปข้อมูล {reportPeriod} วันล่าสุด</h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="text-xs text-gray-500">แคลอรี่รวม (30 วัน)</div>
+            <div className="text-xs text-gray-500">แคลอรี่รวม ({reportPeriod} วัน)</div>
             <div className="text-2xl font-semibold text-orange-600">
-              {monthlySummary.totalCalories.toLocaleString()} kcal
+              {periodSummary.totalCalories.toLocaleString()} kcal
             </div>
           </div>
           {userSmokes && (
             <div className="bg-white rounded-lg p-4 shadow-sm">
-              <div className="text-xs text-gray-500">มวนบุหรี่รวม (30 วัน)</div>
+              <div className="text-xs text-gray-500">มวนบุหรี่รวม ({reportPeriod} วัน)</div>
               <div className="text-2xl font-semibold text-orange-600">
-                {monthlySummary.totalCigarettes.toLocaleString()} มวน
+                {periodSummary.totalCigarettes.toLocaleString()} มวน
               </div>
             </div>
           )}
           {userSmokes && (
             <div className="bg-white rounded-lg p-4 shadow-sm">
-              <div className="text-xs text-gray-500">ความอยากเฉลี่ย (30 วัน)</div>
+              <div className="text-xs text-gray-500">ความอยากเฉลี่ย ({reportPeriod} วัน)</div>
               <div className="text-2xl font-semibold text-orange-600">
-                {monthlySummary.avgCraving} / 10
+                {periodSummary.avgCraving} / 10
               </div>
             </div>
           )}
           <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="text-xs text-gray-500">กิจกรรมทั้งหมด (30 วัน)</div>
+            <div className="text-xs text-gray-500">กิจกรรมทั้งหมด ({reportPeriod} วัน)</div>
             <div className="text-2xl font-semibold text-orange-600">
-              {monthlySummary.totalActivities.toLocaleString()} ครั้ง
+              {periodSummary.totalActivities.toLocaleString()} ครั้ง
             </div>
           </div>
-        </div>
         </div>
       </div>
     </AuthGuard>
