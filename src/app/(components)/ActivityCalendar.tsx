@@ -39,7 +39,9 @@ export default function ActivityCalendar({ userId, userSmokes }: CalendarProps) 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activities, setActivities] = useState<ActivityData[]>([]);
   const [smoking, setSmoking] = useState<SmokingData[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(
+    new Date().toISOString().split('T')[0]
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -176,16 +178,17 @@ export default function ActivityCalendar({ userId, userSmokes }: CalendarProps) 
               onClick={() => setSelectedDate(dayData.date)}
               className={`
                 p-2 text-sm rounded relative min-h-[40px] flex flex-col items-center justify-center
+                transition-colors duration-200
                 ${!isCurrentMonth ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-100'}
-                ${isToday ? 'bg-orange-100 text-orange-700 font-semibold' : ''}
-                ${isSelected ? 'bg-orange-200 text-orange-800 font-semibold' : ''}
-                ${dayData.hasData ? 'border-2 border-orange-300' : ''}
+                ${isToday && !isSelected ? 'bg-orange-100 text-orange-700 font-semibold' : ''}
+                ${isSelected ? 'bg-orange-200 text-orange-800 font-semibold border-2 border-orange-500' : ''}
+                ${dayData.hasData && !isSelected ? 'border border-orange-300' : ''}
               `}
             >
               <span>{day.getDate()}</span>
-              {dayData.hasData && (
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
-                  <div className="w-1 h-1 bg-orange-500 rounded-full"></div>
+              {dayData.hasData && !isSelected && (
+                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
                 </div>
               )}
             </button>
