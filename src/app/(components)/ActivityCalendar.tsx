@@ -84,6 +84,11 @@ export default function ActivityCalendar({ userId, userSmokes }: CalendarProps) 
     return days;
   };
 
+  // ฟังก์ชันช่วยสำหรับการแปลงวันที่
+  const parseDate = (dateString: string) => {
+    return new Date(dateString + 'T00:00:00');
+  };
+
   // ตรวจสอบว่าวันนั้นมีกิจกรรมหรือไม่
   const getDayData = (date: Date) => {
     const dateStr = date.toISOString().split('T')[0];
@@ -200,7 +205,7 @@ export default function ActivityCalendar({ userId, userSmokes }: CalendarProps) 
       {selectedDate && (
         <div className="border-t pt-4">
           <h5 className="font-medium mb-2">
-            วันที่ {new Date(selectedDate).toLocaleDateString('th-TH', {
+            วันที่ {parseDate(selectedDate).toLocaleDateString('th-TH', {
               year: 'numeric',
               month: 'long',
               day: 'numeric'
@@ -208,7 +213,7 @@ export default function ActivityCalendar({ userId, userSmokes }: CalendarProps) 
           </h5>
           
           {(() => {
-            const dayData = getDayData(new Date(selectedDate));
+            const dayData = getDayData(parseDate(selectedDate));
             
             if (!dayData.hasData) {
               return (
