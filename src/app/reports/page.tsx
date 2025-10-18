@@ -481,23 +481,6 @@ export default function ReportsPage() {
             <h1 className="text-2xl font-semibold">รายงาน & สถิติ</h1>
             <p className="text-sm text-gray-600">กราฟความก้าวหน้าและการเปรียบเทียบช่วงเวลา</p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label htmlFor="reportPeriod" className="text-sm font-medium text-gray-700">
-                ช่วงเวลา:
-              </label>
-              <select
-                id="reportPeriod"
-                value={reportPeriod}
-                onChange={(e) => setReportPeriod(Number(e.target.value) as 30 | 90 | 180)}
-                className="px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              >
-                <option value={30}>30 วันล่าสุด</option>
-                <option value={90}>90 วันล่าสุด</option>
-                <option value={180}>180 วันล่าสุด</option>
-              </select>
-            </div>
-          </div>
         </div>
         <div className="flex gap-2 flex-wrap">
           <button
@@ -627,7 +610,24 @@ export default function ReportsPage() {
 
       {/* สรุปสถิติตามช่วงเวลาที่เลือก */}
       <div className="rounded-lg border bg-orange-50 p-6 shadow-sm">
-        <h3 className="text-lg font-medium mb-4 text-orange-700">สรุปข้อมูล {reportPeriod} วันล่าสุด</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-medium text-orange-700">สรุปข้อมูล {reportPeriod} วันล่าสุด</h3>
+          <div className="flex items-center gap-2">
+            <label htmlFor="reportPeriod" className="text-sm font-medium text-orange-700">
+              ช่วงเวลา:
+            </label>
+            <select
+              id="reportPeriod"
+              value={reportPeriod}
+              onChange={(e) => setReportPeriod(Number(e.target.value) as 30 | 90 | 180)}
+              className="px-3 py-1 text-sm border border-orange-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-orange-700"
+            >
+              <option value={30}>30 วันล่าสุด</option>
+              <option value={90}>90 วันล่าสุด</option>
+              <option value={180}>180 วันล่าสุด</option>
+            </select>
+          </div>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="text-xs text-gray-500">แคลอรี่รวม ({reportPeriod} วัน)</div>
