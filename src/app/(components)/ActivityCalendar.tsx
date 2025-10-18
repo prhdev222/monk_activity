@@ -86,12 +86,32 @@ export default function ActivityCalendar({ userId, userSmokes }: CalendarProps) 
 
   // ฟังก์ชันช่วยสำหรับการแปลงวันที่
   const parseDate = (dateString: string) => {
-    return new Date(dateString + 'T00:00:00');
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  // ฟังก์ชันช่วยสำหรับการแปลงวันที่เป็น string แบบ local
+  const formatDateString = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // ฟังก์ชันสำหรับแสดงวันที่เป็นภาษาไทย
+  const formatThaiDate = (dateString: string) => {
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('th-TH', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
   // ตรวจสอบว่าวันนั้นมีกิจกรรมหรือไม่
   const getDayData = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = formatDateString(date);
     const dayActivities = activities.filter(activity => 
       activity.date.startsWith(dateStr)
     );
@@ -205,11 +225,7 @@ export default function ActivityCalendar({ userId, userSmokes }: CalendarProps) 
       {selectedDate && (
         <div className="border-t pt-4">
           <h5 className="font-medium mb-2">
-            วันที่ {parseDate(selectedDate).toLocaleDateString('th-TH', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
+            วันที่ {formatThaiDate(selectedDate)}
           </h5>
           
           {(() => {
