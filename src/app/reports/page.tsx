@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
 import { apiFetch } from "@/lib/fetch";
+import ActivityCalendar from "@/app/(components)/ActivityCalendar";
+import AuthGuard from "@/app/(components)/AuthGuard";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -471,12 +473,13 @@ export default function ReportsPage() {
 
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-semibold">รายงาน & สถิติ</h1>
-          <p className="text-sm text-gray-600">กราฟความก้าวหน้าและการเปรียบเทียบช่วงเวลา</p>
-        </div>
+    <AuthGuard>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-semibold">รายงาน & สถิติ</h1>
+            <p className="text-sm text-gray-600">กราฟความก้าวหน้าและการเปรียบเทียบช่วงเวลา</p>
+          </div>
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={downloadCSV}
@@ -513,9 +516,14 @@ export default function ReportsPage() {
             {sendingClinic ? '⏳ กำลังส่ง...' : '🏥 ส่งไปคลินิก'}
           </button>
         </div>
-      </div>
+        </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Calendar Section */}
+        {userId && (
+          <ActivityCalendar userId={userId} userSmokes={userSmokes} />
+        )}
+
+        <div className="grid gap-6 lg:grid-cols-2">
         {/* แคลอรี่ที่เผาผลาญ */}
         <div className="rounded-lg border bg-white p-6 shadow-sm">
           <h3 className="text-lg font-medium mb-4">แคลอรี่ที่เผาผลาญ (7 วันล่าสุด)</h3>
@@ -631,8 +639,9 @@ export default function ReportsPage() {
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 }
 
